@@ -1,6 +1,6 @@
 <?php
 //Lisätään sivulle tietokanta
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+include("db.php");
 
 //haetaan käyttäjätiedot
 $username = $_COOKIE['ID_my_site'];  
