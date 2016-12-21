@@ -1,22 +1,20 @@
 <?php
-//Tällä scriptillä lisätään tietokantaan kommentti
-
-//lisätään yhteys tietokantaan
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+//database
+include("db.php");
 
 
 // if ($_POST['submit']) {
 
-	//haetaan tiedot kuva.php sivulta
+	//get the information from "kuva.php" page.
 	$get_username = $_POST["username"];
 	$get_password = $_POST["username"];
 	$get_email = $_POST["email"];
 	$get_privileges = $_POST["privileges"];
 
-	//lisätään tietokantaan
+	//add user to database
 	mysql_query("INSERT INTO users (username, password, email, privileges) VALUES ('$get_username', '$get_password', '$get_email', '$get_privileges')");
 
-	//palautetaan käyttäjä takaisin kuvan luo
+	//return "admin" back to users list page
 	header("Location: http://marcosraudkett.com/projektityo/users.php");
 
 // } else {
