@@ -1,8 +1,8 @@
 <?php
-//Lisätään sivulle tietokanta
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+//database
+include("db.php");
 
-//haetaan käyttäjätiedot
+//userinfo
 $username = $_COOKIE['ID_my_site'];  
 $userdata = mysql_query("SELECT * FROM users WHERE username = '$username'");
 $_SESSION = mysql_fetch_assoc($userdata);
