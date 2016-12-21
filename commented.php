@@ -1,8 +1,8 @@
 <?php 
 
 
-//Lisätään sivulle tietokanta
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+//database
+include("db.php");
 
  if(isset($_COOKIE['ID_my_site'])) { 
 
@@ -18,19 +18,20 @@ include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
  			header("Location: login.php"); 
  		} else { 
 
- 	//tässä tarkistetaan onko käyttäjä: ylläpitäjä, postaaja tai tavallinen käyttäjä
- 	// 1 = ylläpitäjä, 2 = postaaja, 3 = tavallinen käyttäjä
+ 	//here we check is the user: admin, moderator or a regular user and we can redirect if needed
+ 	// 1 = admin, 2 = moderator, 3 = regular
  		$userdata = mysql_query("SELECT * FROM users WHERE username = '$username'");
  		$_SESSION = mysql_fetch_assoc($userdata);
         $user_id = $_SESSION["id"];
 
  		if ($_SESSION['privileges'] == 1) {
- 			//jos on ylläpitäjä niin siirtyy "admin.php" sivuille
+ 			//admin
  			
  		} elseif ($_SESSION['privileges'] == 2) {
- 				//pysyy tällä sivulla
+ 				//moderator
+			
  			} elseif ($_SESSION['privileges'] == 3) {
- 				//postaaja siirtyy "user.php" sivuille
+ 					//regular user
  					
  				}
 
@@ -55,8 +56,7 @@ include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
     <link href="css/style-pricing.css" rel="stylesheet">
     <link href="css/style-team.css" rel="stylesheet">
     <link href="css/style-dividers.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+
     <link href="css/font-awesome.css" rel="stylesheet">
 
 
@@ -133,7 +133,7 @@ include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
     		
 <br><br>
 <?php 
-//Luodaan MENU jokaiselle käyttäjätyypeille
+//MENU for users (admin, moderator, regular)
 if ($_SESSION['privileges'] == 1) {
             ?>
                 <div class="btn-group">
