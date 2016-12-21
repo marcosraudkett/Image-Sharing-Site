@@ -2,7 +2,7 @@
 //haetaan kuvien id:t
 
 //Lisätään sivulle tietokanta
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+include("db.php");
 
 //haetaan kuvat ja sortataan se kuvan lisäysajan perusteella
 $receive_pic = mysql_query("SELECT * FROM kuvat LEFT JOIN users ON kuvat.kuvan_lisannyt_id = users.id ORDER BY kuvan_lisaysaika DESC");
