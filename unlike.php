@@ -2,7 +2,7 @@
 //Tällä scriptillä lisätään tietokantaan kommentti
 
 //lisätään yhteys tietokantaan
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+include("db.php");
 
 // if ($_POST['submit']) {
 
