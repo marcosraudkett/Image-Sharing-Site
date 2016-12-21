@@ -1,113 +1,98 @@
 <?php 
-//Projektin kesto: 15.12.2016 - 21.12.2016 
-//Ohjelma luotu 2 päivän sisällä. (Projektityö)
-//https://marcosraudkett.com/
+//add connection to the database
+include("db.php");
 
+//warning! some of these ways are insecure!
 
-//lisätään tietokanta yhteys
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+//$_GET["kuva_id"] = picture id
 
-//nämä ovat nopeita tapoja ja epäturvallisia! sitäpaitsi tämähän on kouluprojekti :)
-//kun turvallisten tapojen tekemiseen menisi runsaasti aikaa...
-//eli tässä ohjelmassa on monta tapaa jossa voi suorittaa SQL Injunction:in!
-
-//hakee kuvan joka on valittu,
-//$_GET["kuva_id"] = kuvan id.
-//kaikki if ($select_pic == '') voitais kirjoittaa -> if (isempty($select_pic)) {  } else { }
-
-
-//Aluksi haetaan kuvan id ja sillä haetaan tietokannasta tarvittavat tiedot.
-
+//first we get the picture id as below
 $selected_pic = $_GET["kuva_id"];
 
-//tarkistaa jos $_GET on lähetetty
+//then we check if it's empty or not
 if ($selected_pic == '') {
-    //tässä voidaan vaikka palauttaa käyttäjä jonnekki muualle. esim '404.php, index.php'
-    //koodilla ->    header("Location: 404.php");    jos halutaan.
+    //in here we could redirect our user if the photo id is empty
+    //with code ->    header("Location: 404.php");    if we want to.
 } else {
-    //Hakee valitun kuvan tiedot tietokannasta ($selected_pic) 
+    //Here we will check the database for the selected picture ($selected_pic) 
     $select_pic = mysql_query("SELECT * FROM kuvat WHERE kuva_id = '$selected_pic' LIMIT 0, 1");
-        //tarkistetaan onko kuva olemassa
-            if ($select_pic == '') { 
-                //tähän voitais myös ilmoittaa että kuvaa ei löytynyt yms tai ohjata jonnekki muualle..
+        //check if it exists (again)
+            if (mysql_num_rows($selected_pic) == 0) {
+                //here we could redirect the user if picture is not found.
             } else {
-                //jos kuva on olemassa niin haetaan kuvan tiedot tietokannasta.
+                //and if the picture exists, then we get all the information from it.
             while ($row_pic = mysql_fetch_array($select_pic)) {
-                    //tässä kirjataan kuvan tiedot muistiin.
-                    $selected_pic_link = $row_pic["kuvan_linkki"]; //kuvanlinkki
-                    $selected_pic_text = $row_pic["kuvan_teksti"]; //kuvateksti
-                    $selected_pic_added = $row_pic["kuvan_lisannyt_id"]; //käyttäjä id
-                    $selected_pic_lisaysaika = $row_pic["selected_pic_lisaysaika"]; //lisäysaika
+                    //picture info
+                    $selected_pic_link = $row_pic["kuvan_linkki"]; //picture link
+                    $selected_pic_text = $row_pic["kuvan_teksti"]; //picture description
+                    $selected_pic_added = $row_pic["kuvan_lisannyt_id"]; //user id (who added)
+                    $selected_pic_lisaysaika = $row_pic["selected_pic_lisaysaika"]; //add time+date
 
                 }
         }
 
-    //Hakee kyseisen kuvan kommentit ja $select_comment_count = laskee kommentien määrät ja limitoidan se että vain 10 uusinta kommenttia näkyy jotta
-    //sivusta ei tulisi liian pitkä. (tämänki vois toteutta AJAX scriptin kautta esim kun scrollaa alaspäin niin se hakee lisää kommentteja..)
+    //This will receive the current picture comments and limit that 10 newest comments are shown (we could make a pagination) we could make this 
+    //work with AJAX that when we scroll down then it loads more comments.. and then we would have to change the place for the comment textfield.
     $select_comment = mysql_query("SELECT * FROM kommentit WHERE kommentti_kuvan_id = '$selected_pic_added' ORDER BY kommentti_lisaysaika DESC LIMIT 0, 7");
-    //lasketaan kuinka monta kommenttia on yhteensä count(*) as total
+    //below we count how many comments there are as "total"
     $select_comment_count = mysql_query("SELECT count(*) as total FROM kommentit WHERE kommentti_kuvan_id = '$selected_pic_added'");
-        //tarkistetaan onko kommentteja olemassa
-            if ($select_comment == '') { 
-                //tähän voitais myös ilmoittaa että kuvaa ei löytynyt yms tai ohjata jonnekki muualle..
+        //check if there are any comments
+            if (mysql_num_rows($select_comment) == 0) { 
+                //here we could do something (if no comments are found)
             } else {
-                //jos käyttäjä on olemassa niin haetaan kuvan tiedot tietokannasta.
+                //if comments exist we get all the info on them:
             while ($row_comment = mysql_fetch_array($select_comment)) {
-                    //tässä kirjataan käyttäjän tiedot muistiin.
-                    $selected_comment_id = $row_comment["kommenti_id"]; //käyttäjän id
-                    $selected_comment_sisalto = $row_comment["kommentin_sisalto"]; //käyttäjänimi
-                    $selected_comment_lisannyt = $row_comment["kommentin_lisannyt"]; //sähköposti
-                    $selected_comment_kuva = $row_comment["kommentin_sisalto"]; //sähköposti
+                    //comment info
+                    $selected_comment_id = $row_comment["kommenti_id"]; //user id (who added)
+                    $selected_comment_sisalto = $row_comment["kommentin_sisalto"]; //username
+                    $selected_comment_lisannyt = $row_comment["kommentin_lisannyt"]; //email
+                    $selected_comment_kuva = $row_comment["kommentin_sisalto"]; //comment itself
             }
     }
 
-    //Hakee kuvan lisäjän tiedot joka on kirjattu muistiin "kuvat" tietokannasta. ($selected_pic_added)
+    //Here we will get all the info on the user that added the photo just in case. ($selected_pic_added)
     $select_user = mysql_query("SELECT * FROM users WHERE id = '$selected_pic_added' LIMIT 0, 1");
-        //tarkistetaan onko kuva olemassa
-            if ($select_user == '') { 
-                //tähän voitais myös ilmoittaa että kuvaa ei löytynyt yms tai ohjata jonnekki muualle..
+        //check if the user exists
+            if (mysql_num_rows($select_user) == 0) { 
+                //Do something...
             } else {
-                //jos käyttäjä on olemassa niin haetaan kuvan tiedot tietokannasta.
+                //and if the user exists we get the info:
             while ($row_user = mysql_fetch_array($select_user)) {
-                    //tässä kirjataan käyttäjän tiedot muistiin.
-                    $selected_user_id = $row_user["id"]; //käyttäjän id
-                    $selected_user_username = $row_user["username"]; //käyttäjänimi
-                    $selected_user_email = $row_user["email"]; //sähköposti
+                    //user info
+                    $selected_user_id = $row_user["id"]; //user ID
+                    $selected_user_username = $row_user["username"]; //username
+                    $selected_user_email = $row_user["email"]; //email
             }
     }
 
-    //Haetaan sisäänkirjautunut käyttäjä cookiella myös
-    //tämä kannattaisi siirtää addcomment.php scriptiin estääkseen SQL Injunction:ia
+    //Here we get the logged in persons information
     $username = $_COOKIE[ID_my_site];
     $select_username = mysql_query("SELECT * FROM users WHERE username = '$username' LIMIT 0, 1");
 
             while ($row_loguserbef = mysql_fetch_array($select_username)) {
-                        //tässä kirjataan kuvan tiedot muistiin.
+                        //get logged in user ID
                         $selected_user_id_before = $row_loguserbef["id"]; //käyttäjän ID
             }
         $select_user_logged = mysql_query("SELECT * FROM users WHERE id = '$selected_user_id_before' LIMIT 0, 1");
-            //tarkistetaan onko kuva olemassa
-                if ($select_user_logged == '') { 
-                    //tähän voitais myös ilmoittaa että kuvaa ei löytynyt yms tai ohjata jonnekki muualle..
+            //check if the user exists
+                if (mysql_num_rows($select_user_logged) == 0) { 
+                    //Do something...
                 } else {
-                    //jos kuva on olemassa niin haetaan kuvan tiedot tietokannasta.
+                    //if the user exists we get the info:
                 while ($row_loguser = mysql_fetch_array($select_user_logged)) {
-                        //tässä kirjataan kuvan tiedot muistiin.
-                        $selected_user_id_after = $row_loguser["id"]; //käyttäjän ID
-                        $selected_user_username_after = $row_loguser["username"]; //käyttäjän username
-                        $selected_user_email_after = $row_loguser["email"]; //käyttäjän sähköposti
+                        //Logged in user info
+                        $selected_user_id_after = $row_loguser["id"]; //user ID
+                        $selected_user_username_after = $row_loguser["username"]; //username
+                        $selected_user_email_after = $row_loguser["email"]; //email
 
                     }
             }
 }
 
-//haetaan käyttäjätiedot
+//user info
 $username = $_COOKIE['ID_my_site'];  
 $userdata = mysql_query("SELECT * FROM users WHERE username = '$username'");
 $_SESSION = mysql_fetch_assoc($userdata);
-
-//nyt voidaan käyttää joka puolella sivulla $selected_pic_VALINTA tai $selected_user_VALINTA
-//sivuston alku
 
 ?>
 
@@ -175,7 +160,7 @@ $_SESSION = mysql_fetch_assoc($userdata);
     							<ul class="nav navbar-nav navbar-right">
     								<?php 
                                     if ($_COOKIE[ID_my_site] == '') {
-                                        //jos käyttäjä ei ole kirjautunut sisään!
+                                        //if the user is not logged in.
                                         ?> 
                                             <li class="propClone">
                                             <a href="auth" data-selector="nav a, a.edit" src="http://icons.iconarchive.com/icons/elegantthemes/beautiful-flat-one-color/72/profle-icon.png" style="outline: none; color: rgb(255, 255, 255); font-weight: bold; text-transform: none;">KIRJAUDU SISÄÄN&nbsp;<span class="fa fa-lock" data-selector="span.fa" style="outline: none;"></span></a>
@@ -220,29 +205,29 @@ $_SESSION = mysql_fetch_assoc($userdata);
 
                         <div class="dropbox">
                             <?php
-//tässä voidaan hakea se kuva ja kaikki sen tiedot jotka haettiin scriptin alussa.
+//here we can get the picture we did in the beginning.
     
-    //tarkistaa löydettiinkö kuva
+    //check
     if ($selected_pic_link == '') {
-        //ilmoittaa että kuvaa ei löydetty
+        //check if the picture exists
         echo 'Kyseistä kuvaa ei löydetty!';
     } else {
-        //tulostaa kuvan
+        //prints the selected image
         echo '<img style="max-height:660px;max-width:100%;border:1;" src="'.$selected_pic_link.'"></img>';
         echo '<div class="description">"'.$selected_pic_text.'"</div>';
     }
 
-    //tarkistaa löydettiinkö käyttäjä 
+    //checks if we found the user
     if ($selected_user_username == '') {
-            //tähän voidaan vaikka ilmoittaa jos kuvaa ei löydetty
+            //Do something...
         } else {
             $gm_result = mysql_query("SELECT * FROM kuvat WHERE kuva_id = '$selected_pic'");
             while ($m_row = mysql_fetch_assoc($gm_result)) {
-                //tulostaa kuvan lisääjän tiedot
+                //prints the adders info
                 date_default_timezone_set('Finland/Helsinki'); setlocale(LC_TIME, array('fi_FI.UTF-8','fi_FI@euro','fi_FI','finnish'));
-                //aluksi tehdään päivämäärästä luonnollinen muoto
+                //first we make the date and time into a better format as below: change the timezones to whatever you want.
                 $time = ucwords(strftime("%d %B %Y",  strtotime($m_row["kuvan_lisaysaika"])));  date_default_timezone_set('Europe/Helsinki');
-                //tulostaa kuvan lisäämisajan
+                //prints the added time.
                 echo '<p>Lisännyt: <b>' . $selected_user_username. '</b>&nbsp;&nbsp;&nbsp; Lisätty: <b>' . $time . '</b></p>';
             }
     }
@@ -253,15 +238,15 @@ $_SESSION = mysql_fetch_assoc($userdata);
     } else {
         echo '<div style="display:inline-flex;" class="form-style-1">';
 
-        //like nappi:
-        //tässä tarkistetaan tykkäykset
+        //LIKE button.
+        //check likes
     $select_likes_logged = mysql_query("SELECT * FROM likes WHERE like_photo_id = '$selected_pic' AND like_user_id = '$selected_user_id_after'");
-        //tykkäyksien määrä
+        //check the amount of likes
     $select_likes_total = mysql_query("SELECT COUNT(*) as total FROM likes WHERE like_photo_id = '$selected_pic'");
     $data = mysql_fetch_assoc($select_likes_total);
-            //tarkistetaan onko kuvaa tykätty jo
+            //check is the picture already liked.
             if (mysql_num_rows($select_likes_logged) == 0) {
-                     //jos käyttäjä ei ole tykännyt niin tulostaa "Tykkää" nappin
+                     //if user has not liked then it prints the LIKE button
                     echo '
                     <form name="like" method="POST" action="like.php">
                     <input type="hidden" name="photo_id" value="'.$selected_pic.'" />
@@ -271,7 +256,7 @@ $_SESSION = mysql_fetch_assoc($userdata);
                     ';
 
             } else {
-                    //jos käyttäjä on tykännyt niin tulostaa "Älä Tykkää" nappin
+                    //if user has liked it will print DISLIKE button.
                     echo '
                     <form name="unlike" method="POST" action="unlike.php">
                     <input type="hidden" name="photo_id" value="'.$selected_pic.'" />
@@ -281,10 +266,11 @@ $_SESSION = mysql_fetch_assoc($userdata);
                     ';        
     }
 
-        //share nappi: 
+        //share button: 
         echo '<form name="share"><button class="btn btn-default btn-embossed btn-lg btn-wide" type="button" id="submit_button"  data-toggle="modal" data-target="#share" value="Jaa Kuvaa" />Jaa Kuvaa</button></form>';
         
         echo '</div>';
+        //here we print the total like amount.
         if (mysql_num_rows($select_likes_total) == '0') { } else { echo '<br>Tykkäyksiä: '.$data["total"]; };
 
     }
@@ -309,26 +295,26 @@ $_SESSION = mysql_fetch_assoc($userdata);
                             ?>  
                             </h4>
                                 <?php
-                                    //tarkistaa onko kommentteja olemassa
+                                    //check if there are any comments
                                     if (mysql_num_rows($select_comment_count) == 0) {
-                                        //kommentteja ei löytynyt
+                                        //Do something...
                                         echo '<p>0 Kommenttia</p>';
                                     } else {
 
                                     $select_comment_print = mysql_query("SELECT * FROM kommentit LEFT JOIN kuvat ON kuvat.kuva_id = kommentit.kommentti_kuvan_id WHERE kommentti_kuvan_id = '$selected_pic' ORDER BY kommentti_lisaysaika DESC");
                                         while ($row_comment_print = mysql_fetch_array($select_comment_print)) {
                                             echo '<br><br><div class="comment"><blockquote>';
-                                                //tulostetaan kommentti
-                                                //tarkistaa onko kommentilla lisääjää
+                                                //Prints comment
+                                                //Checks if there is a user who added it (if not then it will say "Anonymous") -not active currently.. (only members of the site can add comments)
                                                 if ($row_comment_print["kommentin_lisannyt"] == '') {
                                                     echo '<p>'.$row_comment_print["kommentin_sisalto"].'</p>';
                                                     echo '<p>Tuntematon</p>';
                                                 } else {
-                                                    //tulostetaan kommentin sisältö
+                                                    //prints the comment itself
                                                     echo '<p>"'.$row_comment_print["kommentin_sisalto"].'"</p>';
-                                                    //tulostetaan kommentin lisääjä (käyttäjänimi)
+                                                    //print the username who added the comment
                                                     echo '<small><span class="fui-user"></span> <b>'.$row_comment_print["kommentin_lisannyt"].'</b></small>';
-                                                    //käyttäjällä on mahdollisuus poistaa omia kommentteja
+                                                    //only the adder or admin has the ability to delete the comment 
                                                 
                                                    
                                                 if ($_COOKIE[ID_my_site] == $row_comment_print["kommentin_lisannyt"]) {
@@ -337,7 +323,7 @@ $_SESSION = mysql_fetch_assoc($userdata);
                                                     <input type="hidden" name="delete_photo_id" value="'.$selected_pic.'"></input>
                                                     <button style="float:right;padding:4px;" class="btn btn-danger btn-embossed btn-lg btn-wide" type="submit" id="delete_submit"  value="Poista" />Poista</button><form>';
                                                 } else {
-                                                    //jos käyttäjällä on ylläpitäjäoikeudet niin voi poistaa mitä tahansa kommenttei
+                                                    //if the user has ADMIN privileges (1) then he can delete any comment on the page using "deletecommentadmin.php" where we could double check if the user is admin.
                                                         if ($_SESSION["privileges"] == '1') {
                                                                 echo '<form name="deletecommentadmin" action="deletecommentadmin.php" method="post">
                                                                 <input type="hidden" name="delete_com_id" value="'.$row_comment_print["kommentti_id"].'"></input>
@@ -353,17 +339,17 @@ $_SESSION = mysql_fetch_assoc($userdata);
                                             echo '<br></div></blockquote>';
                                         }
                                     }
-                                
-                            //kommentin lisäykseen oltais voitu myös käyttää AJAXia jotta lisäys toimisi reaaliaikaisesti?
-                            //addcomment.php ja name="->comment<-" voitais myös vaihtaa .htaccess tiedostosta joksikin tai vaikka piiloittaa hashatulla tokenillä.
+
+                            //all the script names should be covered in generated tokens or something else? to improve security..
                             ?>
 
                             <?php 
-                            //tässä luvataan kommentointi vain sisäänkirjautuneille.
+                            //here we grant commenting only for the ones that are logged in.
+                                //if you want to add permissions for everyone just delete this PHP part or add //
                               $select_likes_logged = mysql_query("SELECT * FROM likes WHERE like_photo_id = '$selected_pic' AND like_user_id = '$selected_user_id_after'");
                                     //
                                     if ($_COOKIE[ID_my_site] == '') {
-                                        //viesti jos ei ole kirjautunut sisään.
+                                        //message here ? (ex. You must be logged in to comment on this photo! Click here to login)
                                     } else {
                             ?>
                             <div class="form-style-1">
