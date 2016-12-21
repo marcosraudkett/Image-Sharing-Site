@@ -1,6 +1,9 @@
+This project is currently in a FINNISH language only!
+English update coming!
+
 # kuvaton_imagesharing
 A image sharing website with 3 different types of users (admins, posters, regular) [School Project]
-The site is in FINNISH language! read more on my blog post: https://marcosraudkett.com/kuvaton_project_open_source.html
+read more on my blog post: https://marcosraudkett.com/kuvaton_project_open_source.html
 
 
 DEMO SITE: https://marcosraudkett.com/projektityo/
