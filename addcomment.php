@@ -1,20 +1,18 @@
 <?php
-//Tällä scriptillä lisätään tietokantaan kommentti
-
-//lisätään yhteys tietokantaan
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+//database
+include("db.php");
 
 // if ($_POST['submit']) {
 
-	//haetaan tiedot kuva.php sivulta
+	//get info from "kuva.php" aka picture page.
 	$get_comment = $_POST["comment"];
 	$get_pic_id = $_POST["kuvaid"];
 	$get_user_id = $_POST["u_id"];
 
-	//lisätään tietokantaan
+	//add comment to database
 	mysql_query("INSERT INTO kommentit (kommentti_kuvan_id, kommentin_lisannyt, kommentin_sisalto) VALUES ('$get_pic_id', '$get_user_id', '$get_comment')");
 
-	//palautetaan käyttäjä takaisin kuvan luo
+	//return user back to the original post(picture)
 	header("Location: http://marcosraudkett.com/projektityo/kuva.php?kuva_id=$get_pic_id");
 
 // } else {
