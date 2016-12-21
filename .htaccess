@@ -1,0 +1,17 @@
+#tässä tiedostossa poistetaan .php perästä!
+RewriteEngine On
+
+#PHP Linkit
+RewriteRule ^tietoa?$ yhteystiedot.php
+RewriteRule ^auth?$ login.php
+RewriteRule ^etusivu?$ index.php
+RewriteRule ^signup?$ register.php
+RewriteRule ^logout?$ logout.php
+RewriteRule ^home?$ members.php
+RewriteRule ^oma?$ mymembers.php
+RewriteRule ^profiili?$ profile.php
+RewriteRule ^kuva?$ kuva.php
+RewriteRule ^kuvat?$ dropbox.php
+
+#ja jos osoite on kirjoitettu väärin niin ohjataan se 404 error sivustolle.
+ErrorDocument 404 http://marcosraudkett.com/projektityo/404.php
