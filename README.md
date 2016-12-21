@@ -1,5 +1,4 @@
 This project is currently in a FINNISH language only!
-English update coming!
 
 # kuvaton_imagesharing
 A image sharing website with 3 different types of users (admins, posters, regular) [School Project]
