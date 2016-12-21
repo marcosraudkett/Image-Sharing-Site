@@ -1,8 +1,8 @@
 <?php 
 
 
-//Lisätään sivulle tietokanta
-include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
+//database
+include("db.php");
 
  if(isset($_COOKIE['ID_my_site'])) { 
 
@@ -18,18 +18,20 @@ include("../mvrclabs/uploads/8/0/4/6/8046813/tietokanta.php");
  			header("Location: login.php"); 
  		} else { 
 
- 	//tässä tarkistetaan onko käyttäjä: ylläpitäjä, postaaja tai tavallinen käyttäjä
- 	// 1 = ylläpitäjä, 2 = postaaja, 3 = tavallinen käyttäjä
+ 	// 1 = admin, 2 = moderator, 3 = regular user
  		$userdata = mysql_query("SELECT * FROM users WHERE username = '$username'");
  		$_SESSION = mysql_fetch_assoc($userdata);
 
  		if ($_SESSION['privileges'] == 1) {
  
-        } elseif ($_SESSION['privileges'] == 2) {
+        	} elseif ($_SESSION['privileges'] == 2) {
+			
  			    header("Location: members.php");
+			
  			} elseif ($_SESSION['privileges'] == 3) {
- 				//postaaja siirtyy "user.php" sivuille
+ 				
  					header("Location: user.php");
+			
  				}
 
 
