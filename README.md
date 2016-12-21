@@ -12,7 +12,7 @@ users:
 
 Type: Admin
 Username: projektityo
-Password: I will post soon!
+Password: Qwerty1!
 
 Type: Poster
 Username: postaaja
@@ -21,3 +21,5 @@ Password: postaaja
 Type: Regular
 Username: tavallinen
 Tassword: tavallinen
+
+some features has been deactivated in demo mode.
