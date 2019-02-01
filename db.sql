@@ -123,8 +123,8 @@ CREATE TABLE `messages` (
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` VALUES(3, 'Marcos Raudkett', 'test@hotmail.com', 'pystyisittekö tehdä minusta postaajan? voitte katsoa portfolion: http://marcosraudkett.com/prof\r\nKiitos! :)', '2016-12-20 12:56:34');
-INSERT INTO `messages` VALUES(4, 'Marcos Raudkett', 'info@marcosraudkett.com', 'Hei! halusin kysyä että paljonko te pyyätisitte tälläisesta sivusta?', '2016-12-20 17:43:05');
+INSERT INTO `messages` VALUES(3, 'Raudkett', 'test@hotmail.com', 'Test msg 2', '2016-12-20 12:56:34');
+INSERT INTO `messages` VALUES(4, 'Marcos', 'info@example.com', 'Test msg', '2016-12-20 17:43:05');
 
 -- --------------------------------------------------------
 
